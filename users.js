@@ -1,5 +1,5 @@
 const uuid = require('uuid/v4');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 var AWS = require('aws-sdk');
 var docClient = new AWS.DynamoDB.DocumentClient({'region': 'us-west-2'});
 
@@ -11,7 +11,6 @@ class Users {
     create(user, cb) {
         var errors = [];
         var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        console.log(user);
         if (!('email' in user)) {
             errors.push('Missing an email');
         } else if (!(re.test(user.email))) {
@@ -35,6 +34,8 @@ class Users {
                     };
                     docClient.put(params, function(err) {
                         if (err) {
+                            console.log('got an error putting the item in dynamo');
+                            console.log(err);
                             cb(err);
                         } else {
                             cb(errors, user);
@@ -45,6 +46,21 @@ class Users {
         } else {
             cb(errors, user);
         }
+    }
+
+    index(cb) {
+        var params = {
+            TableName: 'users'
+        }
+        docClient.scan(params, function(err, data) {
+            if (err) {
+                console.log('Oh Snap!');
+                console.log(err);
+                cb(err);
+            } else {
+                cb(null, data.Items);
+            }
+        })
     }
 }
 

@@ -24,12 +24,18 @@ provider:
       - "arn:aws:dynamodb:*:*:table/users"
 
 functions:
-  users:
+  createUser:
     handler: handler.userCreate
     events:
       - http:
           path: users
           method: post
+  index:
+    handler: handler.index
+    events:
+      - http:
+          path: users
+          method: get
 
 resources:
   Resources:
