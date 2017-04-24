@@ -3,6 +3,7 @@ var chai = require('chai');
 var chaiHtttp = require('chai-http');
 var should = chai.should();
 var faker = require('faker');
+var dupeEmail = faker.internet.email();
 chai.use(chaiHtttp);
 
 const endpoint = 'http://localhost:3000';
@@ -30,10 +31,11 @@ describe('create user', function() {
             })
     });
     it('returns an id when a user has successfully been created', function(done) {
+        //This will create a user, we will use the same email again to verify that the same email can't be used twice
         var pass = faker.internet.password();
         client.post('/users')
             .set('Content-type', 'application/json')
-            .send({'email': faker.internet.email(), 'password': pass, 'password_confirmation': pass})
+            .send({'email': dupeEmail, 'password': pass, 'password_confirmation': pass})
             .end(function(err, res) {
                 res.should.have.status(200);
                 res.body.user.id.should.exist;
@@ -63,4 +65,15 @@ describe('create user', function() {
                 done();
             })
     });
+    it('will ensure that emails are unique', function(done) {
+        var pass = faker.internet.password();
+        client.post('/users')
+            .set('Content-type', 'application/json')
+            .send({'email': dupeEmail, 'password': pass, 'password_confirmation': pass})
+            .end(function(err, res) {
+                res.should.have.status(200);
+                res.body.errors.length.should.be.at.least(1);
+                done();
+            })
+    })
 });

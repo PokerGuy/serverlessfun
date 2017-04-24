@@ -43,15 +43,11 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
-        - AttributeName: "id"
-          AttributeType: "S"
-        - AttributeName: "email"
-          AttributeType: "S"
-        KeySchema:
-          - AttributeName: "id"
-            KeyType: "HASH"
           - AttributeName: "email"
-            KeyType: "RANGE"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "email"
+            KeyType: "HASH"
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
