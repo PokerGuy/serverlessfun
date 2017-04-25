@@ -1,8 +1,12 @@
 const uuid = require('uuid/v4');
 const bcrypt = require('bcryptjs');
 var AWS = require('aws-sdk');
-var docClient = new AWS.DynamoDB.DocumentClient({'region': 'us-west-2'});
-
+var docClient;
+if (process.env.local === 'true') {
+    docClient = new AWS.DynamoDB.DocumentClient({'region': 'us-west-2', 'endpoint': 'http://localhost:8000'});
+} else {
+    docClient = new AWS.DynamoDB.DocumentClient({'region': 'us-west-2'});
+}
 class Users {
     /* constructor(db) {
         this.db = db;

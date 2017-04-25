@@ -6,6 +6,8 @@ plugins:
 provider:
   name: aws
   runtime: nodejs6.10
+  environment:
+    local: ${opt:local}
 
 # you can overwrite defaults here
 #  stage: dev
